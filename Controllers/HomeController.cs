@@ -22,10 +22,16 @@ namespace Prog7311_Assignment_2.Controllers
         {
             return View();
         }
-       /* public IActionResult test()
+
+        [HttpPost]
+        public IActionResult SelectRole(string role)
         {
-            return View();
-        }*/
+            if (role == "Farmer" || role == "Employee")
+            {
+                return RedirectToAction("LoginRegister", "Auth", new { role });
+            }
+            return RedirectToAction("Index");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

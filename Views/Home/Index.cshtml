@@ -6,9 +6,10 @@
     <h1 class="display-4">Welcome to Agri-Connect</h1>
     <p>Your one-stop shop for a green tomorrow</p>
 
-    <!-- Buttons for Employee and Farmer -->
-    <div class="btn-group" role="group" aria-label="User Roles">
-        <button type="button" class="btn btn-primary">Employee</button>
-        <button type="button" class="btn btn-success">Farmer</button>
-    </div>
+    <form asp-controller="Home" asp-action="SelectRole" method="post">
+        <div class="btn-group" role="group" aria-label="User Roles">
+            <button type="submit" name="role" value="Employee" class="btn btn-primary">Employee</button>
+            <button type="submit" name="role" value="Farmer" class="btn btn-success">Farmer</button>
+        </div>
+    </form>
 </div>
