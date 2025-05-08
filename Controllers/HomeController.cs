@@ -22,6 +22,10 @@ namespace Prog7311_Assignment_2.Controllers
         {
             return View();
         }
+       /* public IActionResult test()
+        {
+            return View();
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
