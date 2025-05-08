@@ -1,0 +1,46 @@
+﻿@model List<Prog7311_Assignment_2.Models.Product>
+@{
+    ViewData["Title"] = "Farmer Dashboard";
+}
+
+<div class="container">
+    <h2>Farmer Dashboard</h2>
+
+    <h3>Add New Product</h3>
+    <form asp-controller="Dashboard" asp-action="AddProduct" method="post">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="category" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Production Date</label>
+            <input type="date" name="productionDate" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success mt-2">Add Product</button>
+    </form>
+
+    <h3>Your Products</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Production Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Category</td>
+                    <td>@product.ProductionDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,62 @@
+﻿@model Prog7311_Assignment_2.Controllers.EmployeeDashboardViewModel
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<div class="container">
+    <h2>Employee Dashboard</h2>
+
+    <h3>Add New Farmer</h3>
+    <form asp-controller="Dashboard" asp-action="AddFarmer" method="post">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Contact Info</label>
+            <input type="text" name="contactInfo" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success mt-2">Add Farmer</button>
+    </form>
+
+    <h3>Filter Products</h3>
+    <form asp-controller="Dashboard" asp-action="FilterProducts" method="get">
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="category" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" name="startDate" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>End Date</label>
+            <input type="date" name="endDate" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Filter</button>
+    </form>
+
+    <h3>Products</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Production Date</th>
+                <th>Farmer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                var farmer = Model.Farmers.FirstOrDefault(f => f.Id == product.FarmerId);
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Category</td>
+                    <td>@product.ProductionDate.ToShortDateString()</td>
+                    <td>@(farmer?.Name ?? "Unknown")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
