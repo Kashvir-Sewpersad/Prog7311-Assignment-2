@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prog7311_Assignment_2.Models;
-using System.Linq;
+using Prog7311_Assignment_2.Services;
 
 namespace Prog7311_Assignment_2.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly AuthService _authService;
+
+        public AuthController(AuthService authService)
+        {
+            _authService = authService;
+        }
+
         public IActionResult LoginRegister(string role)
         {
             ViewBag.Role = role;
@@ -15,14 +22,12 @@ namespace Prog7311_Assignment_2.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password, string role)
         {
-            var user = DataStore.Users.FirstOrDefault(u => u.Username == username && u.Password == password && u.Role == role);
-            if (user != null)
+            var result = _authService.Login(username, password, role, HttpContext.Session);
+            if (result.Success)
             {
-                HttpContext.Session.SetString("UserId", user.Id.ToString());
-                HttpContext.Session.SetString("Role", user.Role);
                 return RedirectToAction("Index", "Dashboard");
             }
-            ViewBag.Error = "Invalid credentials";
+            ViewBag.Error = result.ErrorMessage;
             ViewBag.Role = role;
             return View("LoginRegister");
         }
@@ -30,24 +35,14 @@ namespace Prog7311_Assignment_2.Controllers
         [HttpPost]
         public IActionResult Register(string username, string password, string role)
         {
-            if (DataStore.Users.Any(u => u.Username == username))
+            var result = _authService.Register(username, password, role, HttpContext.Session);
+            if (result.Success)
             {
-                ViewBag.Error = "Username already exists";
-                ViewBag.Role = role;
-                return View("LoginRegister");
+                return RedirectToAction("Index", "Dashboard");
             }
-
-            var newUser = new User
-            {
-                Id = DataStore.Users.Count + 1,
-                Username = username,
-                Password = password,
-                Role = role
-            };
-            DataStore.Users.Add(newUser);
-            HttpContext.Session.SetString("UserId", newUser.Id.ToString());
-            HttpContext.Session.SetString("Role", newUser.Role);
-            return RedirectToAction("Index", "Dashboard");
+            ViewBag.Error = result.ErrorMessage;
+            ViewBag.Role = role;
+            return View("LoginRegister");
         }
     }
 }

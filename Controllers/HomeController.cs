@@ -26,11 +26,7 @@ namespace Prog7311_Assignment_2.Controllers
         [HttpPost]
         public IActionResult SelectRole(string role)
         {
-            if (role == "Farmer" || role == "Employee")
-            {
-                return RedirectToAction("LoginRegister", "Auth", new { role });
-            }
-            return RedirectToAction("Index");
+            return RedirectToAction("LoginRegister", "Auth", new { role });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
