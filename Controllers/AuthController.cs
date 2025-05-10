@@ -33,9 +33,9 @@ namespace Prog7311_Assignment_2.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(string username, string password, string role)
+        public IActionResult Register(string name, string surname, string username, string email, string password, string confirmPassword, string role)
         {
-            var result = _authService.Register(username, password, role, HttpContext.Session);
+            var result = _authService.Register(name, surname, username, email, password, confirmPassword, role, HttpContext.Session);
             if (result.Success)
             {
                 return RedirectToAction("Index", "Dashboard");

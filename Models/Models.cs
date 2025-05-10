@@ -8,7 +8,13 @@ namespace Prog7311_Assignment_2.Models
     {
         public int Id { get; set; }
         [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Surname { get; set; }
+        [Required]
         public string Username { get; set; }
+        [Required, EmailAddress]
+        public string Email { get; set; }
         [Required]
         public string Password { get; set; }
         public string Role { get; set; } // "Farmer" or "Employee"
@@ -20,7 +26,13 @@ namespace Prog7311_Assignment_2.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public string ContactInfo { get; set; }
+        public string Surname { get; set; }
+        [Required]
+        public string Username { get; set; }
+        [Required, EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
     }
 
     public class Product
@@ -32,6 +44,8 @@ namespace Prog7311_Assignment_2.Models
         public string Category { get; set; }
         [Required]
         public DateTime ProductionDate { get; set; }
+        [Required]
+        public DateTime EndDate { get; set; }
         public int FarmerId { get; set; }
     }
 
@@ -45,18 +59,18 @@ namespace Prog7311_Assignment_2.Models
     {
         public static List<User> Users { get; set; } = new List<User>
         {
-            new User { Id = 1, Username = "farmer1", Password = "pass123", Role = "Farmer" },
-            new User { Id = 2, Username = "employee1", Password = "pass123", Role = "Employee" }
+            new User { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555", Role = "Farmer" },
+            new User { Id = 2, Name = "Jane", Surname = "Smith", Username = "employee1", Email = "jane.smith@example.com", Password = "pass123", Role = "Employee" }
         };
 
         public static List<Farmer> Farmers { get; set; } = new List<Farmer>
         {
-            new Farmer { Id = 1, Name = "John Doe", ContactInfo = "john@example.com" }
+            new Farmer { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555" }
         };
 
         public static List<Product> Products { get; set; } = new List<Product>
         {
-            new Product { Id = 1, Name = "Apples", Category = "Fruit", ProductionDate = DateTime.Now.AddDays(-10), FarmerId = 1 }
+            new Product { Id = 1, Name = "Apples", Category = "Food", ProductionDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(20), FarmerId = 1 }
         };
     }
 }
