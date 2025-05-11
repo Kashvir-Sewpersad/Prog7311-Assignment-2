@@ -29,6 +29,11 @@ namespace Prog7311_Assignment_2.Controllers
             return RedirectToAction("LoginRegister", "Auth", new { role });
         }
 
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

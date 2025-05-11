@@ -1,7 +1,54 @@
 ﻿@model List<Prog7311_Assignment_2.Models.Product>
 @{
     ViewData["Title"] = "Farmer Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure layout is used
 }
+
+<style>
+    /* Video background styling */
+    .video-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1; /* Place video behind content */
+    }
+
+    /* Adjust container for readability over video */
+    .container {
+        background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Ensure table and form elements are readable */
+    .table, .form-group label, h2, h3 {
+        color: #333; /* Darker text for contrast */
+    }
+
+    /* Fallback background color in case video doesn't load */
+    .video-background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f8f9fa; /* Fallback background color */
+        z-index: -2;
+    }
+</style>
+
+<!-- Video background with fallback -->
+<div class="video-background-container">
+    <video class="video-background" autoplay muted loop>
+        <source src="/videos/WhatsApp_Video_2025-05-11_155734_f760cc9b.mp4" type="video/mp4">
+        <p>Your browser does not support the video tag, or the video file could not be found.</p>
+    </video>
+</div>
 
 <div class="container">
     <h2>Farmer Dashboard</h2>
