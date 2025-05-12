@@ -1,9 +1,18 @@
-﻿using Prog7311_Assignment_2.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Prog7311_Assignment_2.Data;
+using Prog7311_Assignment_2.Models;
 
 namespace Prog7311_Assignment_2.Services
 {
     public class FarmerService
     {
+        private readonly DataContext _context;
+
+        public FarmerService(DataContext context)
+        {
+            _context = context;
+        }
+
         public class FarmerResult
         {
             public bool Success { get; set; }
@@ -12,12 +21,12 @@ namespace Prog7311_Assignment_2.Services
 
         public List<Farmer> GetAllFarmers()
         {
-            return DataStore.Farmers.ToList();
+            return _context.Farmers.ToList();
         }
 
         public FarmerResult AddFarmer(string name, string surname, string username, string email, string password, string confirmPassword)
         {
-            if (DataStore.Farmers.Any(f => f.Username == username))
+            if (_context.Farmers.Any(f => f.Username == username))
             {
                 return new FarmerResult { Success = false, ErrorMessage = "Username already exists" };
             }
@@ -29,14 +38,30 @@ namespace Prog7311_Assignment_2.Services
 
             var farmer = new Farmer
             {
-                Id = DataStore.Farmers.Count + 1,
                 Name = name,
                 Surname = surname,
                 Username = username,
                 Email = email,
                 Password = password
             };
-            DataStore.Farmers.Add(farmer);
+
+            _context.Farmers.Add(farmer);
+            _context.SaveChanges();
+
+            // Also add to Users table
+            var user = new User
+            {
+                Name = name,
+                Surname = surname,
+                Username = username,
+                Email = email,
+                Password = password,
+                Role = "Farmer"
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
             return new FarmerResult { Success = true };
         }
     }

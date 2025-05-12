@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿
+
+<!--*************************************** Start of layout file **************************************************-->
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -11,23 +15,28 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Agri-Connect</a>
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!--The following div is for the navigation bar -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>  <!--Home tab -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Dashboard">Dashboard</a>  <!--Dashboard tab -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>  <!--Privacy page -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>  <!--Contact form -->
                     </li>
+
+
                 </ul>
             </div>
         </nav>
@@ -50,3 +59,4 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+<!--******************************* End of layout file **************************************-->

@@ -44,5 +44,17 @@ namespace Prog7311_Assignment_2.Controllers
             ViewBag.Role = role;
             return View("LoginRegister");
         }
+
+        [HttpGet]
+        public IActionResult FarmerLogin()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult RegisterFarmer()
+        {
+            return View("FarmerRegister");
+        }
     }
 }
