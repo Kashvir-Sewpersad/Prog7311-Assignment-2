@@ -1,51 +1,64 @@
 ﻿@model List<Prog7311_Assignment_2.Models.Product>
 @{
     ViewData["Title"] = "Farmer Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure layout is used
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
-    /* Video background styling */
-    .video-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
+    html, body {
+        margin: 0;
+        padding: 0;
         height: 100%;
-        object-fit: cover;
-        z-index: -1; /* Place video behind content */
+        overflow: hidden;
     }
 
-    /* Adjust container for readability over video */
-    .container {
-        background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
-        padding: 20px;
-        border-radius: 10px;
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-
-    /* Ensure table and form elements are readable */
-    .table, .form-group label, h2, h3 {
-        color: #333; /* Darker text for contrast */
-    }
-
-    /* Fallback background color in case video doesn't load */
     .video-background-container {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: #f8f9fa; /* Fallback background color */
+        overflow: hidden;
         z-index: -2;
+    }
+
+    .video-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        z-index: -1;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 10;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .table, .form-group label, h2, h3 {
+        color: #333;
+    }
+
+    .scrollable-content {
+        max-height: 300px;
+        overflow-y: auto;
     }
 </style>
 
-<!-- Video background with fallback -->
 <div class="video-background-container">
-    <video class="video-background" autoplay muted loop>
-        <source src="/videos/WhatsApp_Video_2025-05-11_155734_f760cc9b.mp4" type="video/mp4">
+    <video class="video-background" autoplay muted loop playsinline>
+        <source src="/videos/vecteezy_two-ducks-are-walking-foraging-on-the-green-grass-the-canal_25555270.mp4" type="video/mp4">
         <p>Your browser does not support the video tag, or the video file could not be found.</p>
     </video>
 </div>
@@ -54,6 +67,12 @@
     <h2>Farmer Dashboard</h2>
 
     <h3>Add New Product</h3>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            <p>@TempData["Error"]</p>
+        </div>
+    }
     <form asp-controller="Dashboard" asp-action="AddProduct" method="post" id="addProductForm">
         <div class="form-group">
             <label>Name</label>
@@ -82,59 +101,61 @@
     </form>
 
     <h3>Your Products</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Production Date</th>
-                <th>End Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
+    <div class="scrollable-content">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@product.Name</td>
-                    <td>@product.Category</td>
-                    <td>@product.ProductionDate.ToShortDateString()</td>
-                    <td>@product.EndDate.ToShortDateString()</td>
-                    <td>
-                        <form asp-controller="Dashboard" asp-action="EditProduct" method="post" class="d-inline edit-product-form">
-                            <input type="hidden" name="id" value="@product.Id" />
-                            <input type="text" name="name" value="@product.Name" class="form-control d-inline-block w-25" required />
-                            <select name="category" class="form-control d-inline-block w-25 category-select" required onchange="toggleOtherCategoryEdit('@product.Id')">
-                                @{
-                                    var categories = new[] { "Food", "Wheat", "Dairy", "Other" };
-                                    foreach (var category in categories)
-                                    {
-                                        var isSelected = product.Category == category || (category == "Other" && !categories.Contains(product.Category));
-                                        if (isSelected)
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Production Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@product.Category</td>
+                        <td>@product.ProductionDate.ToShortDateString()</td>
+                        <td>@product.EndDate.ToShortDateString()</td>
+                        <td>
+                            <form asp-controller="Dashboard" asp-action="EditProduct" method="post" class="d-inline edit-product-form">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <input type="text" name="name" value="@product.Name" class="form-control d-inline-block w-25" required />
+                                <select name="category" class="form-control d-inline-block w-25 category-select" required onchange="toggleOtherCategoryEdit('@product.Id')">
+                                    @{
+                                        var categories = new[] { "Food", "Wheat", "Dairy", "Other" };
+                                        foreach (var category in categories)
                                         {
-                                            <option value="@category" selected>@category</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@category">@category</option>
+                                            var isSelected = product.Category == category || (category == "Other" && !categories.Contains(product.Category));
+                                            if (isSelected)
+                                            {
+                                                <option value="@category" selected>@category</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@category">@category</option>
+                                            }
                                         }
                                     }
-                                }
-                            </select>
-                            <input type="text" name="otherCategoryEdit_@product.Id" id="otherCategoryEdit_@product.Id" class="form-control mt-2 d-inline-block w-25 other-category-input" style="display:@(product.Category == "Other" || !new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "inline-block" : "none");" value="@(new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "" : product.Category)" />
-                            <input type="date" name="productionDate" value="@product.ProductionDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
-                            <input type="date" name="endDate" value="@product.EndDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
-                            <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                        </form>
-                        <form asp-controller="Dashboard" asp-action="DeleteProduct" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
-                            <input type="hidden" name="id" value="@product.Id" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                                </select>
+                                <input type="text" name="otherCategoryEdit_@product.Id" id="otherCategoryEdit_@product.Id" class="form-control mt-2 d-inline-block w-25 other-category-input" style="display:@(product.Category == "Other" || !new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "inline-block" : "none");" value="@(new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "" : product.Category)" />
+                                <input type="date" name="productionDate" value="@product.ProductionDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
+                                <input type="date" name="endDate" value="@product.EndDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                            </form>
+                            <form asp-controller="Dashboard" asp-action="DeleteProduct" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <script>
         function toggleOtherCategory() {
@@ -173,6 +194,14 @@
             if (select.value === 'Other' && otherInput.value) {
                 select.value = otherInput.value;
             }
+
+            // Validate dates
+            var productionDate = new Date(document.querySelector('input[name="productionDate"]').value);
+            var endDate = new Date(document.querySelector('input[name="endDate"]').value);
+            if (productionDate >= endDate) {
+                e.preventDefault();
+                alert("Production date must be before the end date.");
+            }
         });
 
         document.querySelectorAll('form.edit-product-form').forEach(form => {
@@ -182,6 +211,14 @@
                 var otherInput = this.querySelector(`input.other-category-input`);
                 if (select.value === 'Other' && otherInput.value) {
                     select.value = otherInput.value;
+                }
+
+                // Validate dates for edit form
+                var productionDate = new Date(this.querySelector('input[name="productionDate"]').value);
+                var endDate = new Date(this.querySelector('input[name="endDate"]').value);
+                if (productionDate >= endDate) {
+                    e.preventDefault();
+                    alert("Production date must be before the end date.");
                 }
             });
         });

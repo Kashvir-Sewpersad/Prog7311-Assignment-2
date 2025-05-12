@@ -58,11 +58,11 @@ namespace Prog7311_Assignment_2.Services
             _context.Users.Add(newUser);
             _context.SaveChanges();
 
-            // If registering a farmer, also add to Farmers table
             if (role == "Farmer")
             {
                 var newFarmer = new Farmer
                 {
+                    Id = newUser.Id, // Ensure the Farmer Id matches the User Id
                     Name = name,
                     Surname = surname,
                     Username = username,

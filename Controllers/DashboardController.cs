@@ -39,10 +39,31 @@ namespace Prog7311_Assignment_2.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddProduct(string name, string category, DateTime productionDate, DateTime endDate)
+        public IActionResult AddProduct(string name, string category, DateTime productionDate, DateTime endDate, string otherCategory)
         {
-            var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
-            var result = _productService.AddProduct(name, category, productionDate, endDate, userId);
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString) || userIdString == "0")
+            {
+                return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
+            }
+            var userId = int.Parse(userIdString);
+            Console.WriteLine($"UserId: {userId}"); // Add logging for debugging
+
+            if (category == "Other" && !string.IsNullOrEmpty(otherCategory))
+            {
+                category = otherCategory;
+            }
+
+            var (success, errorMessage) = _productService.AddProduct(name, category, productionDate, endDate, userId);
+            if (!success)
+            {
+                if (errorMessage.Contains("Farmer with ID"))
+                {
+                    TempData["Error"] = "Your farmer profile is missing. Please register or update your profile.";
+                    return RedirectToAction("RegisterFarmer", "Auth");
+                }
+                TempData["Error"] = errorMessage;
+            }
             return RedirectToAction("Index");
         }
 
@@ -50,7 +71,6 @@ namespace Prog7311_Assignment_2.Controllers
         public IActionResult EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate)
         {
             var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
-            // Check if "Other" category was selected and a custom category was provided
             var otherCategoryKey = $"otherCategoryEdit_{id}";
             var otherCategory = Request.Form.ContainsKey(otherCategoryKey) ? Request.Form[otherCategoryKey].ToString() : null;
             if (category == "Other" && !string.IsNullOrEmpty(otherCategory))
@@ -58,6 +78,10 @@ namespace Prog7311_Assignment_2.Controllers
                 category = otherCategory;
             }
             var result = _productService.EditProduct(id, name, category, productionDate, endDate, userId);
+            if (!result)
+            {
+                TempData["Error"] = "Failed to edit product. Ensure the product exists and the production date is before the end date.";
+            }
             return RedirectToAction("Index");
         }
 
@@ -66,6 +90,10 @@ namespace Prog7311_Assignment_2.Controllers
         {
             var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
             var result = _productService.DeleteProduct(id, userId);
+            if (!result)
+            {
+                TempData["Error"] = "Failed to delete product. Ensure the product exists.";
+            }
             return RedirectToAction("Index");
         }
 

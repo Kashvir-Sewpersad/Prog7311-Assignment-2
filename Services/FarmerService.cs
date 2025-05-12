@@ -48,9 +48,10 @@ namespace Prog7311_Assignment_2.Services
             _context.Farmers.Add(farmer);
             _context.SaveChanges();
 
-            // Also add to Users table
+            // Use the same Id for the User entry
             var user = new User
             {
+                Id = farmer.Id, // Ensure the User Id matches the Farmer Id
                 Name = name,
                 Surname = surname,
                 Username = username,

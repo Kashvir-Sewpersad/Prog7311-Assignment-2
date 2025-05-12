@@ -28,11 +28,16 @@ namespace Prog7311_Assignment_2.Services
             return _context.Products.ToList();
         }
 
-        public bool AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int farmerId)
+        public (bool Success, string ErrorMessage) AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int farmerId)
         {
             if (productionDate >= endDate)
             {
-                return false; // Validation: Production date should be before end date
+                return (false, "Production date must be before the end date.");
+            }
+
+            if (!_context.Farmers.Any(f => f.Id == farmerId))
+            {
+                return (false, $"Farmer with ID {farmerId} does not exist.");
             }
 
             var product = new Product
@@ -46,7 +51,7 @@ namespace Prog7311_Assignment_2.Services
 
             _context.Products.Add(product);
             _context.SaveChanges();
-            return true;
+            return (true, null);
         }
 
         public bool EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate, int farmerId)
