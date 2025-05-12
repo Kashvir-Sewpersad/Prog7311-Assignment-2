@@ -28,7 +28,7 @@ namespace Prog7311_Assignment_2.Data
             );
 
             modelBuilder.Entity<Farmer>().HasData(
-                new Farmer { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555" }
+                new Farmer { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555", UserId = 1 }
             );
 
             // Use static dates instead of DateTime.Now
@@ -38,11 +38,18 @@ namespace Prog7311_Assignment_2.Data
                     Id = 1,
                     Name = "Apples",
                     Category = "Food",
-                    ProductionDate = new DateTime(2025, 5, 1), // Static date: May 1, 2025
-                    EndDate = new DateTime(2025, 5, 31),      // Static date: May 31, 2025
+                    ProductionDate = new DateTime(2025, 5, 1),
+                    EndDate = new DateTime(2025, 5, 31),
                     FarmerId = 1
                 }
             );
+
+            // Configure the relationship between Farmer and User
+            modelBuilder.Entity<Farmer>()
+                .HasOne(f => f.User)
+                .WithMany(u => u.Farmers)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Optional: cascading delete
         }
     }
 }

@@ -16,6 +16,12 @@ namespace Prog7311_Assignment_2.Services
             _context = context;
         }
 
+        public class ProductResult
+        {
+            public bool Success { get; set; }
+            public string ErrorMessage { get; set; }
+        }
+
         public List<Product> GetProductsByFarmer(int farmerId)
         {
             return _context.Products
@@ -28,16 +34,17 @@ namespace Prog7311_Assignment_2.Services
             return _context.Products.ToList();
         }
 
-        public (bool Success, string ErrorMessage) AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int farmerId)
+        public (bool Success, string ErrorMessage) AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int userId)
         {
-            if (productionDate >= endDate)
+            var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+            if (farmer == null)
             {
-                return (false, "Production date must be before the end date.");
+                return (false, $"Farmer with UserId {userId} not found.");
             }
 
-            if (!_context.Farmers.Any(f => f.Id == farmerId))
+            if (productionDate >= endDate)
             {
-                return (false, $"Farmer with ID {farmerId} does not exist.");
+                return (false, "Production Date must be before End Date.");
             }
 
             var product = new Product
@@ -46,18 +53,31 @@ namespace Prog7311_Assignment_2.Services
                 Category = category,
                 ProductionDate = productionDate,
                 EndDate = endDate,
-                FarmerId = farmerId
+                FarmerId = farmer.Id
             };
 
-            _context.Products.Add(product);
-            _context.SaveChanges();
-            return (true, null);
+            try
+            {
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to add product: {ex.Message}");
+            }
         }
 
-        public bool EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate, int farmerId)
+        public bool EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate, int userId)
         {
+            var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+            if (farmer == null)
+            {
+                return false;
+            }
+
             var product = _context.Products
-                .FirstOrDefault(p => p.Id == id && p.FarmerId == farmerId);
+                .FirstOrDefault(p => p.Id == id && p.FarmerId == farmer.Id);
             if (product == null || productionDate >= endDate)
             {
                 return false;
@@ -71,10 +91,16 @@ namespace Prog7311_Assignment_2.Services
             return true;
         }
 
-        public bool DeleteProduct(int id, int farmerId)
+        public bool DeleteProduct(int id, int userId)
         {
+            var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+            if (farmer == null)
+            {
+                return false;
+            }
+
             var product = _context.Products
-                .FirstOrDefault(p => p.Id == id && p.FarmerId == farmerId);
+                .FirstOrDefault(p => p.Id == id && p.FarmerId == farmer.Id);
             if (product == null)
             {
                 return false;

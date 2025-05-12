@@ -27,6 +27,8 @@ namespace Prog7311_Assignment_2.Models
 
         [Required]
         public string Role { get; set; } // "Farmer" or "Employee"
+
+        public List<Farmer> Farmers { get; set; } // Navigation property
     }
 
     public class Farmer
@@ -48,6 +50,10 @@ namespace Prog7311_Assignment_2.Models
 
         [Required]
         public string Password { get; set; }
+
+        public int UserId { get; set; } // Foreign key to Users table
+        [ForeignKey("UserId")]
+        public User User { get; set; }  // Navigation property
 
         // Navigation property for products
         public List<Product> Products { get; set; } = new List<Product>();

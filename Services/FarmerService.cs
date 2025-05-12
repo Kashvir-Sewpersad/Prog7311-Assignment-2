@@ -36,22 +36,8 @@ namespace Prog7311_Assignment_2.Services
                 return new FarmerResult { Success = false, ErrorMessage = "Passwords do not match" };
             }
 
-            var farmer = new Farmer
-            {
-                Name = name,
-                Surname = surname,
-                Username = username,
-                Email = email,
-                Password = password
-            };
-
-            _context.Farmers.Add(farmer);
-            _context.SaveChanges();
-
-            // Use the same Id for the User entry
             var user = new User
             {
-                Id = farmer.Id, // Ensure the User Id matches the Farmer Id
                 Name = name,
                 Surname = surname,
                 Username = username,
@@ -61,6 +47,19 @@ namespace Prog7311_Assignment_2.Services
             };
 
             _context.Users.Add(user);
+            _context.SaveChanges(); // Save the User first to get the auto-generated Id
+
+            var farmer = new Farmer
+            {
+                Name = name,
+                Surname = surname,
+                Username = username,
+                Email = email,
+                Password = password,
+                UserId = user.Id // Link the Farmer to the User via UserId
+            };
+
+            _context.Farmers.Add(farmer);
             _context.SaveChanges();
 
             return new FarmerResult { Success = true };

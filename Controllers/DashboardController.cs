@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prog7311_Assignment_2.Models;
 using Prog7311_Assignment_2.Services;
+using Prog7311_Assignment_2.Data;
 using System;
+using System.Linq;
 
 namespace Prog7311_Assignment_2.Controllers
 {
@@ -9,21 +11,30 @@ namespace Prog7311_Assignment_2.Controllers
     {
         private readonly ProductService _productService;
         private readonly FarmerService _farmerService;
+        private readonly DataContext _context;
 
-        public DashboardController(ProductService productService, FarmerService farmerService)
+        public DashboardController(ProductService productService, FarmerService farmerService, DataContext context)
         {
             _productService = productService;
             _farmerService = farmerService;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             var role = HttpContext.Session.GetString("Role");
-            var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
+            var userIdString = HttpContext.Session.GetString("UserId") ?? "0";
+            var userId = int.Parse(userIdString);
 
             if (role == "Farmer")
             {
-                var products = _productService.GetProductsByFarmer(userId);
+                var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+                if (farmer == null)
+                {
+                    TempData["Error"] = "Farmer account not found.";
+                    return RedirectToAction("RegisterFarmer", "Auth");
+                }
+                var products = _productService.GetProductsByFarmer(farmer.Id);
                 return View("FarmerDashboard", products);
             }
             else if (role == "Employee")
@@ -57,7 +68,7 @@ namespace Prog7311_Assignment_2.Controllers
             var (success, errorMessage) = _productService.AddProduct(name, category, productionDate, endDate, userId);
             if (!success)
             {
-                if (errorMessage.Contains("Farmer with ID"))
+                if (errorMessage.Contains("Farmer with UserId"))
                 {
                     TempData["Error"] = "Your farmer profile is missing. Please register or update your profile.";
                     return RedirectToAction("RegisterFarmer", "Auth");
@@ -71,13 +82,20 @@ namespace Prog7311_Assignment_2.Controllers
         public IActionResult EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate)
         {
             var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
+            var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+            if (farmer == null)
+            {
+                TempData["Error"] = "Farmer account not found.";
+                return RedirectToAction("Index");
+            }
+
             var otherCategoryKey = $"otherCategoryEdit_{id}";
             var otherCategory = Request.Form.ContainsKey(otherCategoryKey) ? Request.Form[otherCategoryKey].ToString() : null;
             if (category == "Other" && !string.IsNullOrEmpty(otherCategory))
             {
                 category = otherCategory;
             }
-            var result = _productService.EditProduct(id, name, category, productionDate, endDate, userId);
+            var result = _productService.EditProduct(id, name, category, productionDate, endDate, farmer.Id);
             if (!result)
             {
                 TempData["Error"] = "Failed to edit product. Ensure the product exists and the production date is before the end date.";
@@ -89,7 +107,14 @@ namespace Prog7311_Assignment_2.Controllers
         public IActionResult DeleteProduct(int id)
         {
             var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
-            var result = _productService.DeleteProduct(id, userId);
+            var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
+            if (farmer == null)
+            {
+                TempData["Error"] = "Farmer account not found.";
+                return RedirectToAction("Index");
+            }
+
+            var result = _productService.DeleteProduct(id, farmer.Id);
             if (!result)
             {
                 TempData["Error"] = "Failed to delete product. Ensure the product exists.";

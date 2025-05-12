@@ -8,28 +8,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Prog7311_Assignment_2.Migrations
 {
     /// <inheritdoc />
-    public partial class EnsureFarmerUserIdMatch : Migration
+    public partial class AddUserIdToFarmer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Farmers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Farmers", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -46,6 +29,30 @@ namespace Prog7311_Assignment_2.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Farmers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Farmers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Farmers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,11 +79,6 @@ namespace Prog7311_Assignment_2.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Farmers",
-                columns: new[] { "Id", "Email", "Name", "Password", "Surname", "Username" },
-                values: new object[] { 1, "james@gmail.com", "James", "Jamie555", "May", "JamesMay555" });
-
-            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Name", "Password", "Role", "Surname", "Username" },
                 values: new object[,]
@@ -86,9 +88,19 @@ namespace Prog7311_Assignment_2.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Farmers",
+                columns: new[] { "Id", "Email", "Name", "Password", "Surname", "UserId", "Username" },
+                values: new object[] { 1, "james@gmail.com", "James", "Jamie555", "May", 1, "JamesMay555" });
+
+            migrationBuilder.InsertData(
                 table: "Products",
                 columns: new[] { "Id", "Category", "EndDate", "FarmerId", "Name", "ProductionDate" },
                 values: new object[] { 1, "Food", new DateTime(2025, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Apples", new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Farmers_UserId",
+                table: "Farmers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_FarmerId",
@@ -114,10 +126,10 @@ namespace Prog7311_Assignment_2.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Farmers");
 
             migrationBuilder.DropTable(
-                name: "Farmers");
+                name: "Users");
         }
     }
 }

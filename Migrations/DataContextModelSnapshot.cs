@@ -46,11 +46,16 @@ namespace Prog7311_Assignment_2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Farmers");
 
@@ -62,6 +67,7 @@ namespace Prog7311_Assignment_2.Migrations
                             Name = "James",
                             Password = "Jamie555",
                             Surname = "May",
+                            UserId = 1,
                             Username = "JamesMay555"
                         });
                 });
@@ -173,6 +179,17 @@ namespace Prog7311_Assignment_2.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Prog7311_Assignment_2.Models.Farmer", b =>
+                {
+                    b.HasOne("Prog7311_Assignment_2.Models.User", "User")
+                        .WithMany("Farmers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Prog7311_Assignment_2.Models.Product", b =>
                 {
                     b.HasOne("Prog7311_Assignment_2.Models.Farmer", "Farmer")
@@ -187,6 +204,11 @@ namespace Prog7311_Assignment_2.Migrations
             modelBuilder.Entity("Prog7311_Assignment_2.Models.Farmer", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Prog7311_Assignment_2.Models.User", b =>
+                {
+                    b.Navigation("Farmers");
                 });
 #pragma warning restore 612, 618
         }
