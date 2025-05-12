@@ -20,7 +20,11 @@
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" class="form-control" required />
+                    <input type="password" id="loginPassword" name="password" class="form-control" required />
+                    <div class="form-check mt-1">
+                        <input type="checkbox" id="showLoginPassword" class="form-check-input" />
+                        <label class="form-check-label" for="showLoginPassword">Show Password</label>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-2">Login</button>
             </form>
@@ -47,14 +51,42 @@
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" class="form-control" required />
+                    <input type="password" id="registerPassword" name="password" class="form-control" required />
+                    <div class="form-check mt-1">
+                        <input type="checkbox" id="showRegisterPassword" class="form-check-input" />
+                        <label class="form-check-label" for="showRegisterPassword">Show Password</label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Confirm Password</label>
-                    <input type="password" name="confirmPassword" class="form-control" required />
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
+                    <div class="form-check mt-1">
+                        <input type="checkbox" id="showConfirmPassword" class="form-check-input" />
+                        <label class="form-check-label" for="showConfirmPassword">Show Confirm Password</label>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-success mt-2">Register</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // Toggle password visibility for Login
+    document.getElementById('showLoginPassword').addEventListener('change', function () {
+        const passwordField = document.getElementById('loginPassword');
+        passwordField.type = this.checked ? 'text' : 'password';
+    });
+
+    // Toggle password visibility for Register
+    document.getElementById('showRegisterPassword').addEventListener('change', function () {
+        const passwordField = document.getElementById('registerPassword');
+        passwordField.type = this.checked ? 'text' : 'password';
+    });
+
+    // Toggle confirm password visibility for Register
+    document.getElementById('showConfirmPassword').addEventListener('change', function () {
+        const passwordField = document.getElementById('confirmPassword');
+        passwordField.type = this.checked ? 'text' : 'password';
+    });
+</script>
