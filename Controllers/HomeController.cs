@@ -1,9 +1,22 @@
+
+
+//////////////////////////////////////////// start of file /////////////////////////////////////
+
+
+//---------------------------- start of imports -------------//
+
 using Microsoft.AspNetCore.Mvc;
+
 using Prog7311_Assignment_2.Models;
+
 using System.Diagnostics;
+
+//------------------------------- end of imports --------------// 
 
 namespace Prog7311_Assignment_2.Controllers
 {
+    //*********************** start of code ************************//
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -12,7 +25,7 @@ namespace Prog7311_Assignment_2.Controllers
         {
             _logger = logger;
         }
-
+        // home page 
         public IActionResult Index()
         {
             return View();
@@ -26,7 +39,7 @@ namespace Prog7311_Assignment_2.Controllers
         [HttpPost]
         public IActionResult SelectRole(string role)
         {
-            // Direct farmers to farmer login, employees to login/register
+            // Direct action for   farmers to farmer login, employees to login/register
             if (role == "Farmer")
             {
                 return RedirectToAction("FarmerLogin", "Auth");
@@ -48,4 +61,7 @@ namespace Prog7311_Assignment_2.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+    //******************************* end of code *******************************//
 }
+
+//////////////////////////////////////////////////////// end of file //////////////////////////////////////////////
