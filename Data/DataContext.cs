@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+///////////////////////////////////////////// START OF FILE ///////////////////////////////////////////////
+
+using Microsoft.EntityFrameworkCore;
 using Prog7311_Assignment_2.Models;
 
 namespace Prog7311_Assignment_2.Data
@@ -21,7 +24,14 @@ namespace Prog7311_Assignment_2.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Role);
 
-            // Seed Users table
+
+
+
+            /////////////////////////////////////// START OF SEEDED DATA /////////////////////////////////////////////////////////
+          
+
+
+            //  Users 1
             modelBuilder.Entity<User>().HasData(
                 // Seeded Employee
                 new User
@@ -64,33 +74,35 @@ namespace Prog7311_Assignment_2.Data
             // Seed Products table for the farmer
             modelBuilder.Entity<Product>().HasData(
                 new Product
-                {
-                    Id = 1,
-                    Name = "Organic Carrots",
-                    Category = "Vegetables",
-                    ProductionDate = new DateTime(2025, 4, 1),
-                    EndDate = new DateTime(2025, 4, 30),
-                    FarmerId = 1
-                },
+                    {
+                        Id = 1,
+                        Name = "Organic Carrots",
+                        Category = "Vegetables",
+                        ProductionDate = new DateTime(2025, 4, 1),
+                        EndDate = new DateTime(2025, 4, 30),
+                        FarmerId = 1
+                    },
                 new Product
-                {
-                    Id = 2,
-                    Name = "Fresh Milk",
-                    Category = "Dairy",
-                    ProductionDate = new DateTime(2025, 5, 1),
-                    EndDate = new DateTime(2025, 5, 15),
-                    FarmerId = 1
-                },
+                        {
+                            Id = 2,
+                            Name = "Fresh Milk",
+                            Category = "Dairy",
+                            ProductionDate = new DateTime(2025, 5, 1),
+                            EndDate = new DateTime(2025, 5, 15),
+                            FarmerId = 1
+                        },
                 new Product
-                {
-                    Id = 3,
-                    Name = "Wheat Flour",
-                    Category = "Wheat",
-                    ProductionDate = new DateTime(2025, 5, 1),
-                    EndDate = new DateTime(2025, 6, 1),
-                    FarmerId = 1
-                }
+                                {
+                                    Id = 3,
+                                    Name = "Wheat Flour",
+                                    Category = "Wheat",
+                                    ProductionDate = new DateTime(2025, 5, 1),
+                                    EndDate = new DateTime(2025, 6, 1),
+                                    FarmerId = 1
+                                }
             );
+
+            ///////////////////////////////////////////////////// END OF SEEDED DATA /////////////////////////////////////////
 
             // Configure the relationship between Farmer and User
             modelBuilder.Entity<Farmer>()
@@ -101,3 +113,4 @@ namespace Prog7311_Assignment_2.Data
         }
     }
 }
+////////////////////////////////////////////////// END OF FILE ///////////////////////////////////////////

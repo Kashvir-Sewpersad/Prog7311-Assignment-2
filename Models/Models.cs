@@ -1,10 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+///////////////////////////////////////////////// START OF FILE /////////////////////////////////////////
+
+//------------------------------- START OF IMPORTS -------------------------//
 using System.ComponentModel.DataAnnotations;
+
 using System.ComponentModel.DataAnnotations.Schema;
 
+//-------------------------------- END OF IMPORTS --------------------------//
 namespace Prog7311_Assignment_2.Models
 {
+
+    /*
+     the below code is for user database : user variables with id (primary key )
+
+    // the form will not allow any actions to commense should the form not be filled out completely : required 
+     */
     public class User
     {
         [Key]
@@ -17,7 +27,7 @@ namespace Prog7311_Assignment_2.Models
         public string Surname { get; set; }
 
         [Required]
-        public string Username { get; set; }
+        public string Username { get; set; } // username for login / registerr 
 
         [Required, EmailAddress]
         public string Email { get; set; }
@@ -31,10 +41,17 @@ namespace Prog7311_Assignment_2.Models
         public List<Farmer> Farmers { get; set; } // Navigation property
     }
 
+
+    /*
+     the below code is for farmer database : farmer  variables with id (primary key )
+
+    // the form will not allow any actions to commense should the form not be filled out completely : required 
+     */
+
     public class Farmer
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; set; } // PK
 
         [Required]
         public string Name { get; set; }
@@ -59,6 +76,13 @@ namespace Prog7311_Assignment_2.Models
         public List<Product> Products { get; set; } = new List<Product>();
     }
 
+
+    /*
+     the below code is for product  database : product  variables with id (primary key )
+
+    // the form will not allow any actions to commense should the form not be filled out completely : required 
+     */
+
     public class Product
     {
         [Key]
@@ -81,4 +105,7 @@ namespace Prog7311_Assignment_2.Models
         [ForeignKey("FarmerId")]
         public Farmer Farmer { get; set; }
     }
+
+    //****************************************** end of code ************************************//
 }
+///////////////////////////////////////////////// end of file //////////////////////////////////////////
