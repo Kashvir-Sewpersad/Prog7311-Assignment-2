@@ -1,46 +1,46 @@
-﻿
-//////////////////////////////////////////////////// Start of file ///////////////////////////////////////////////////
-
-//******************************* Start of imports ******************************//
-using Microsoft.AspNetCore.Mvc;
-
+﻿using Microsoft.AspNetCore.Mvc;
 using Prog7311_Assignment_2.Services;
-
-//******************************* End of file *********************************//
 
 namespace Prog7311_Assignment_2.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly AuthService _authService; // private variable for authentication service 
+        private readonly AuthService _authService;
 
         public AuthController(AuthService authService)
         {
             _authService = authService;
         }
 
-        /*
-         below is a login function which is used to manage which role is selected for login and registering 
-         */
+        // General method to direct to appropriate login page based on role
         public IActionResult LoginRegister(string role)
         {
-            ViewBag.Role = role;
+            if (role == "Farmer")
+            {
+                return RedirectToAction("FarmerLogin");
+            }
 
-            return View(); // returning a view
+            ViewBag.Role = role;
+            return View();
         }
 
+        // Farmer-specific login page
+        [HttpGet]
+        public IActionResult FarmerLogin()
+        {
+            ViewBag.Role = "Farmer";
+            return View();
+        }
 
-        /*
-         * 
-         * 
-         below is a fucntion for the actions regarding the login poceedure 
+        // Employee login/register page
+        [HttpGet]
+        public IActionResult EmployeeLoginRegister()
+        {
+            ViewBag.Role = "Employee";
+            return View("LoginRegister");
+        }
 
-            the login passes the variables of username, password and the role selected into the authentication services for verification 
-
-                if the output is success the user will be redirected to the home dashboard 
-         
-        should a failure occure an error message will be displayed and the user will be redirected to the login/ register  form 
-         */
+        // Login action for both roles
         [HttpPost]
         public IActionResult Login(string username, string password, string role)
         {
@@ -49,48 +49,47 @@ namespace Prog7311_Assignment_2.Controllers
             {
                 return RedirectToAction("Index", "Dashboard");
             }
+
             ViewBag.Error = result.ErrorMessage;
             ViewBag.Role = role;
+
+            // Redirect to the appropriate view based on role
+            if (role == "Farmer")
+            {
+                return View("FarmerLogin");
+            }
 
             return View("LoginRegister");
         }
 
-        /*
-         the following code is to allow the registration of users by making use of vatiabls listed bellow 
-            the variables are passed into the authentication service 
-
-        if the outcome is a success the user will be sent to their respective dashboard 
-
-        if a fail the user will be redirected to the rigister form 
-         
-         */
+        // Register action only for employees
         [HttpPost]
         public IActionResult Register(string name, string surname, string username, string email, string password, string confirmPassword, string role)
         {
+            // Only allow employee registration
+            if (role != "Employee")
+            {
+                ViewBag.Error = "Direct registration is not allowed for this role. Please contact an employee.";
+                ViewBag.Role = role;
+                return View("LoginRegister");
+            }
+
             var result = _authService.Register(name, surname, username, email, password, confirmPassword, role, HttpContext.Session);
             if (result.Success)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
+
             ViewBag.Error = result.ErrorMessage;
             ViewBag.Role = role;
-
             return View("LoginRegister");
         }
-        
-        [HttpGet]
-        public IActionResult FarmerLogin()
-        {
-            return View();
-        }
 
-        
-
-        [HttpGet]
-        public IActionResult RegisterFarmer()
+        // Logout action
+        public IActionResult Logout()
         {
-            return View("FarmerRegister");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
-///////////////////////////////////////////////////// end of file ///////////////////////////////////////////////////////////

@@ -26,7 +26,15 @@ namespace Prog7311_Assignment_2.Controllers
         [HttpPost]
         public IActionResult SelectRole(string role)
         {
-            return RedirectToAction("LoginRegister", "Auth", new { role });
+            // Direct farmers to farmer login, employees to login/register
+            if (role == "Farmer")
+            {
+                return RedirectToAction("FarmerLogin", "Auth");
+            }
+            else
+            {
+                return RedirectToAction("EmployeeLoginRegister", "Auth");
+            }
         }
 
         public IActionResult Contact()

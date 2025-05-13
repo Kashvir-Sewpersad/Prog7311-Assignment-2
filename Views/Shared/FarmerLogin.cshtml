@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Farmer Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .video-background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -2;
+    }
+
+    .video-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        z-index: -1;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 10;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .form-group label, h2, h3 {
+        color: #333;
+    }
+</style>
+<div class="video-background-container"> <video class="video-background" autoplay muted loop playsinline> <source src="/videos/vecteezy_two-ducks-are-walking-foraging-on-the-green-grass-the-canal_25555270.mp4" type="video/mp4"> <p>Your browser does not support the video tag, or the video file could not be found.</p> </video> </div>
+<div class="container">
+    <h2>Farmer Login</h2>
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Login</h3>
+                    <form asp-controller="Auth" asp-action="Login" method="post">
+                        <input type="hidden" name="role" value="Farmer" />
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" name="username" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" name="password" class="form-control" required />
+                            <div class="form-check mt-1">
+                                <input type="checkbox" id="showLoginPassword" class="form-check-input" />
+                                <label class="form-check-label" for="showLoginPassword">Show Password</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Login</button>
+                    </form>
+                    <div class="mt-3 text-center">
+                        <p>Don't have an account? Please contact an employee to register your farmer profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>// Toggle password visibility for Login document.getElementById('showLoginPassword').addEventListener('change', function () { const passwordField = document.getElementById('loginPassword'); passwordField.type = this.checked ? 'text' : 'password'; }); </script>
