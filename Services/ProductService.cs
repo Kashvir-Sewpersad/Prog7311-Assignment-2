@@ -10,6 +10,7 @@ using Prog7311_Assignment_2.Models;
 
 namespace Prog7311_Assignment_2.Services
 {
+    //*************************************** start of code ****************************************//
     public class ProductService
     {
         private readonly DataContext _context; // variable for data context 
@@ -69,10 +70,15 @@ namespace Prog7311_Assignment_2.Services
             var product = new Product
             {
                 Name = name,
+
                 Category = category,
+
                 ProductionDate = productionDate,
+
                 EndDate = endDate,
+
                 FarmerId = farmer.Id
+
             };
 
             try
@@ -103,10 +109,15 @@ namespace Prog7311_Assignment_2.Services
             }
 
             product.Name = name;
+
             product.Category = category;
+
             product.ProductionDate = productionDate;
+
             product.EndDate = endDate;
+
             _context.SaveChanges();
+
             return true;
         }
 
@@ -133,14 +144,22 @@ namespace Prog7311_Assignment_2.Services
         public List<Product> FilterProducts(string category, DateTime? startDate, DateTime? endDate)
         {
             var products = _context.Products.AsQueryable();
+
             if (!string.IsNullOrEmpty(category))
+
                 products = products.Where(p => p.Category == category);
+
             if (startDate.HasValue)
+
                 products = products.Where(p => p.ProductionDate >= startDate.Value);
+
             if (endDate.HasValue)
+
                 products = products.Where(p => p.EndDate <= endDate.Value);
+
             return products.ToList();
         }
     }
+    //************************************* end of code ****************************************//
 }
 //////////////////////////////////////////////////// End of file //////////////////////////////////////////////////
