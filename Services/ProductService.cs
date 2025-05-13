@@ -3,14 +3,23 @@
 /////////////////////////////////////////////////// Start of file ////////////////////////////////////////////////////
 
 //---------------------------------- Start of Imports -----------------------//
+
 using Prog7311_Assignment_2.Data;
 
 using Prog7311_Assignment_2.Models;
+
 //------------------------------------ End of imports -----------------------//
 
 namespace Prog7311_Assignment_2.Services
 {
     //*************************************** start of code ****************************************//
+
+
+    /// <summary>
+    /// Kashvir 
+    /// Sewpersad 
+    /// st10257503 
+    /// </summary>
     public class ProductService
     {
         private readonly DataContext _context; // variable for data context 

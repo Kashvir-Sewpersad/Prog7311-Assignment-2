@@ -195,7 +195,7 @@
                 select.value = otherInput.value;
             }
 
-            // Validate dates
+            // dates
             var productionDate = new Date(document.querySelector('input[name="productionDate"]').value);
             var endDate = new Date(document.querySelector('input[name="endDate"]').value);
             if (productionDate >= endDate) {
@@ -213,7 +213,7 @@
                     select.value = otherInput.value;
                 }
 
-                // Validate dates for edit form
+                //  dates for edit form
                 var productionDate = new Date(this.querySelector('input[name="productionDate"]').value);
                 var endDate = new Date(this.querySelector('input[name="endDate"]').value);
                 if (productionDate >= endDate) {

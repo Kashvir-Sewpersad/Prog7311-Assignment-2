@@ -205,7 +205,7 @@
 </div>
 
 <script>
-    // Initialize Bootstrap tabs
+    // Initialize Bootstrap 
     document.addEventListener('DOMContentLoaded', function () {
         var tabElms = document.querySelectorAll('button[data-bs-toggle="tab"]');
         tabElms.forEach(function (tabElm) {
@@ -213,21 +213,21 @@
                 event.preventDefault();
                 var tabTarget = document.querySelector(this.getAttribute('data-bs-target'));
 
-                // Hide all tab panes
+              
                 document.querySelectorAll('.tab-pane').forEach(function (pane) {
                     pane.classList.remove('show', 'active');
                 });
 
-                // Remove active class from all tabs
+                
                 document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(function (tab) {
                     tab.classList.remove('active');
                     tab.setAttribute('aria-selected', 'false');
                 });
 
-                // Show the selected tab pane
+               
                 tabTarget.classList.add('show', 'active');
 
-                // Mark this tab as active
+                
                 this.classList.add('active');
                 this.setAttribute('aria-selected', 'true');
             });
