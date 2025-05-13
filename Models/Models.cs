@@ -86,7 +86,7 @@ namespace Prog7311_Assignment_2.Models
     public class Product
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; set; } // pk
 
         [Required]
         public string Name { get; set; }
@@ -95,7 +95,7 @@ namespace Prog7311_Assignment_2.Models
         public string Category { get; set; }
 
         [Required]
-        public DateTime ProductionDate { get; set; }
+        public DateTime ProductionDate { get; set; } // start date 
 
         [Required]
         public DateTime EndDate { get; set; }
