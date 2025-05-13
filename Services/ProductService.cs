@@ -1,39 +1,58 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+
+/////////////////////////////////////////////////// Start of file ////////////////////////////////////////////////////
+
+//---------------------------------- Start of Imports -----------------------//
 using Prog7311_Assignment_2.Data;
+
 using Prog7311_Assignment_2.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+//------------------------------------ End of imports -----------------------//
 
 namespace Prog7311_Assignment_2.Services
 {
     public class ProductService
     {
-        private readonly DataContext _context;
+        private readonly DataContext _context; // variable for data context 
 
         public ProductService(DataContext context)
         {
-            _context = context;
+            _context = context; // giving the context an instance 
         }
 
+        /*
+         The below function gets and sets a variable for messages 
+         */
         public class ProductResult
         {
             public bool Success { get; set; }
             public string ErrorMessage { get; set; }
         }
+        /*
+         the below function gets the information stored in the product databse by using the ID unique to each farmer 
 
+         
+         */
         public List<Product> GetProductsByFarmer(int farmerId)
         {
             return _context.Products
-                .Where(p => p.FarmerId == farmerId)
+                .Where(p => p.FarmerId == farmerId) 
                 .ToList();
         }
-
+        /*
+         the below code is to retive all product data stored in the database 
+                
+                this will be used to display products on the dashboard 
+         */
         public List<Product> GetAllProducts()
         {
             return _context.Products.ToList();
         }
+        /*
+         the below code is for the adding product process 
 
+        variables are passed in 
+         
+         */
         public (bool Success, string ErrorMessage) AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int userId)
         {
             var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
@@ -124,3 +143,4 @@ namespace Prog7311_Assignment_2.Services
         }
     }
 }
+//////////////////////////////////////////////////// End of file //////////////////////////////////////////////////
