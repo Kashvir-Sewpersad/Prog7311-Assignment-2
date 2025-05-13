@@ -31,8 +31,8 @@ namespace Prog7311_Assignment_2.Controllers
                 var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
                 if (farmer == null)
                 {
-                    TempData["Error"] = "Farmer account not found.";
-                    return RedirectToAction("RegisterFarmer", "Auth");
+                    TempData["Error"] = "Farmer account not found. Please contact an employee to register your account.";
+                    return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
                 }
                 var products = _productService.GetProductsByFarmer(farmer.Id);
                 return View("FarmerDashboard", products);
@@ -42,7 +42,8 @@ namespace Prog7311_Assignment_2.Controllers
                 var model = new EmployeeDashboardViewModel
                 {
                     Products = _productService.GetAllProducts(),
-                    Farmers = _farmerService.GetAllFarmers()
+                    Farmers = _farmerService.GetAllFarmers(),
+                    Employees = _context.Users.Where(u => u.Role == "Employee").ToList()
                 };
                 return View("EmployeeDashboard", model);
             }
@@ -58,7 +59,7 @@ namespace Prog7311_Assignment_2.Controllers
                 return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
             }
             var userId = int.Parse(userIdString);
-            Console.WriteLine($"UserId: {userId}"); // Add logging for debugging
+            Console.WriteLine($"UserId: {userId}");
 
             if (category == "Other" && !string.IsNullOrEmpty(otherCategory))
             {
@@ -70,8 +71,8 @@ namespace Prog7311_Assignment_2.Controllers
             {
                 if (errorMessage.Contains("Farmer with UserId"))
                 {
-                    TempData["Error"] = "Your farmer profile is missing. Please register or update your profile.";
-                    return RedirectToAction("RegisterFarmer", "Auth");
+                    TempData["Error"] = "Your farmer profile is missing. Please contact an employee to register your account.";
+                    return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
                 }
                 TempData["Error"] = errorMessage;
             }
@@ -85,7 +86,7 @@ namespace Prog7311_Assignment_2.Controllers
             var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
             if (farmer == null)
             {
-                TempData["Error"] = "Farmer account not found.";
+                TempData["Error"] = "Farmer account not found. Please contact an employee to register your account.";
                 return RedirectToAction("Index");
             }
 
@@ -110,7 +111,7 @@ namespace Prog7311_Assignment_2.Controllers
             var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
             if (farmer == null)
             {
-                TempData["Error"] = "Farmer account not found.";
+                TempData["Error"] = "Farmer account not found. Please contact an employee to register your account.";
                 return RedirectToAction("Index");
             }
 
@@ -130,6 +131,10 @@ namespace Prog7311_Assignment_2.Controllers
             {
                 TempData["Error"] = result.ErrorMessage;
             }
+            else
+            {
+                TempData["Success"] = "Farmer added successfully.";
+            }
             return RedirectToAction("Index");
         }
 
@@ -140,7 +145,8 @@ namespace Prog7311_Assignment_2.Controllers
             var model = new EmployeeDashboardViewModel
             {
                 Products = products,
-                Farmers = _farmerService.GetAllFarmers()
+                Farmers = _farmerService.GetAllFarmers(),
+                Employees = _context.Users.Where(u => u.Role == "Employee").ToList()
             };
             return View("EmployeeDashboard", model);
         }
@@ -150,5 +156,6 @@ namespace Prog7311_Assignment_2.Controllers
     {
         public List<Product> Products { get; set; }
         public List<Farmer> Farmers { get; set; }
+        public List<User> Employees { get; set; } // Added to hold registered employees
     }
 }

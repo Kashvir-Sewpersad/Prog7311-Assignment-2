@@ -1,13 +1,66 @@
-﻿<!--Privacy UI Page  -->
+﻿
+
 @{
     ViewData["Title"] = "Privacy Policy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>@ViewData["Title"]</h1>
 
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
 
-<!--text to appear on UI  -->
-<p>Agri-Energy Connect values your privacy. We are committed to protecting your  information in compliance with the Protection of Personal Information Act (POPIA) of South Africa.</p>
+    .video-background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -2;
+    }
 
-<p>Any personal data you provide—such as your name, contact details, or usage  used solely to improve our services, support your experience, and communicate relevant updates. We do not sell or share your information with third parties without your consent, unless required by law.</p>
+    .video-background {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        z-index: -1;
+    }
 
-<p>By using our website, you agree to this policy. For any questions or concerns, please contact us at <a href="mailto:privacy@agri-connect.co.za">privacy@agri-connect.co.za</a>.</p>
+    .container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 10;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    h1, h2, p, a {
+        color: #333;
+    }
+</style>
+<div class="video-background-container"> <video class="video-background" autoplay muted loop playsinline> <source src="/videos/vecteezy_two-ducks-are-walking-foraging-on-the-green-grass-the-canal_25555270.mp4" type="video/mp4"> <p>Your browser does not support the video tag, or the video file could not be found.</p> </video> </div>
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <p>Agri-Energy Connect values your privacy. We are committed to protecting your information in compliance with the Protection of Personal Information Act (POPIA) of South Africa.</p>
+
+            <p>Any personal data you provide—such as your name, contact details, or usage data—is used solely to improve our services, support your experience, and communicate relevant updates. We do not sell or share your information with third parties without your consent, unless required by law.</p>
+
+            <p>By using our website, you agree to this policy. For any questions or concerns, please contact us at <a href="mailto:privacy@agri-connect.co.za">privacy@agri-connect.co.za</a>.</p>
+        </div>
+    </div>
+</div>

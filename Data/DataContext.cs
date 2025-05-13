@@ -21,25 +21,73 @@ namespace Prog7311_Assignment_2.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Role);
 
-            // Seed initial data with static values
+            // Seed Users table
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555", Role = "Farmer" },
-                new User { Id = 2, Name = "Jane", Surname = "Smith", Username = "employee1", Email = "jane.smith@example.com", Password = "pass123", Role = "Employee" }
+                // Seeded Employee
+                new User
+                {
+                    Id = 1,
+                    Name = "Emma",
+                    Surname = "Watson",
+                    Username = "emma.watson",
+                    Email = "emma.watson@example.com",
+                    Password = "emma123",
+                    Role = "Employee"
+                },
+                // Seeded Farmer (User entry)
+                new User
+                {
+                    Id = 2,
+                    Name = "Liam",
+                    Surname = "Smith",
+                    Username = "liam.smith",
+                    Email = "liam.smith@example.com",
+                    Password = "liam456",
+                    Role = "Farmer"
+                }
             );
 
+            // Seed Farmers table
             modelBuilder.Entity<Farmer>().HasData(
-                new Farmer { Id = 1, Name = "James", Surname = "May", Username = "JamesMay555", Email = "james@gmail.com", Password = "Jamie555", UserId = 1 }
+                new Farmer
+                {
+                    Id = 1,
+                    Name = "Liam",
+                    Surname = "Smith",
+                    Username = "liam.smith",
+                    Email = "liam.smith@example.com",
+                    Password = "liam456",
+                    UserId = 2
+                }
             );
 
-            // Use static dates instead of DateTime.Now
+            // Seed Products table for the farmer
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
                     Id = 1,
-                    Name = "Apples",
-                    Category = "Food",
+                    Name = "Organic Carrots",
+                    Category = "Vegetables",
+                    ProductionDate = new DateTime(2025, 4, 1),
+                    EndDate = new DateTime(2025, 4, 30),
+                    FarmerId = 1
+                },
+                new Product
+                {
+                    Id = 2,
+                    Name = "Fresh Milk",
+                    Category = "Dairy",
                     ProductionDate = new DateTime(2025, 5, 1),
-                    EndDate = new DateTime(2025, 5, 31),
+                    EndDate = new DateTime(2025, 5, 15),
+                    FarmerId = 1
+                },
+                new Product
+                {
+                    Id = 3,
+                    Name = "Wheat Flour",
+                    Category = "Wheat",
+                    ProductionDate = new DateTime(2025, 5, 1),
+                    EndDate = new DateTime(2025, 6, 1),
                     FarmerId = 1
                 }
             );
@@ -49,7 +97,7 @@ namespace Prog7311_Assignment_2.Data
                 .HasOne(f => f.User)
                 .WithMany(u => u.Farmers)
                 .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Optional: cascading delete
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
