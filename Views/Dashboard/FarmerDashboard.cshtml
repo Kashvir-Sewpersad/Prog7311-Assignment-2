@@ -129,7 +129,7 @@
                                         var categories = new[] { "Food", "Wheat", "Dairy", "Other" };
                                         foreach (var category in categories)
                                         {
-                                            var isSelected = product.Category == category || (category == "Other" && !categories.Contains(product.Category));
+                                            var isSelected = product.Category == category || (category == "Other" && !categories.Take(3).Contains(product.Category));
                                             if (isSelected)
                                             {
                                                 <option value="@category" selected>@category</option>
@@ -141,7 +141,7 @@
                                         }
                                     }
                                 </select>
-                                <input type="text" name="otherCategoryEdit_@product.Id" id="otherCategoryEdit_@product.Id" class="form-control mt-2 d-inline-block w-25 other-category-input" style="display:@(product.Category == "Other" || !new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "inline-block" : "none");" value="@(new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "" : product.Category)" />
+                                <input type="text" name="otherCategory" id="otherCategoryEdit_@product.Id" class="form-control mt-2 d-inline-block w-25 other-category-input" style="display:@(!new[] { "Food", "Wheat", "Dairy" }.Contains(product.Category) ? "inline-block" : "none");" value="@(new[] { "Food", "Wheat", "Dairy", "Other" }.Contains(product.Category) ? "" : product.Category)" />
                                 <input type="date" name="productionDate" value="@product.ProductionDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
                                 <input type="date" name="endDate" value="@product.EndDate.ToString("yyyy-MM-dd")" class="form-control d-inline-block w-25" required />
                                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
@@ -163,12 +163,10 @@
             var otherInput = document.getElementById('otherCategoryInput');
             if (select.value === 'Other') {
                 otherInput.style.display = 'block';
-                select.required = false;
                 otherInput.required = true;
             } else {
                 otherInput.style.display = 'none';
                 otherInput.value = '';
-                select.required = true;
                 otherInput.required = false;
             }
         }
@@ -178,47 +176,34 @@
             var otherInput = document.getElementById(`otherCategoryEdit_${productId}`);
             if (select.value === 'Other') {
                 otherInput.style.display = 'inline-block';
-                select.required = false;
                 otherInput.required = true;
             } else {
                 otherInput.style.display = 'none';
                 otherInput.value = '';
-                select.required = true;
                 otherInput.required = false;
             }
         }
 
         document.getElementById('addProductForm').addEventListener('submit', function (e) {
-            var select = document.getElementById('categorySelect');
-            var otherInput = document.getElementById('otherCategoryInput');
-            if (select.value === 'Other' && otherInput.value) {
-                select.value = otherInput.value;
-            }
-
-            // dates
+            // Validate dates
             var productionDate = new Date(document.querySelector('input[name="productionDate"]').value);
             var endDate = new Date(document.querySelector('input[name="endDate"]').value);
             if (productionDate >= endDate) {
                 e.preventDefault();
                 alert("Production date must be before the end date.");
+                return false;
             }
         });
 
         document.querySelectorAll('form.edit-product-form').forEach(form => {
             form.addEventListener('submit', function (e) {
-                var productId = this.querySelector('input[name="id"]').value;
-                var select = this.querySelector(`select.category-select[onchange="toggleOtherCategoryEdit('${productId}')"]`);
-                var otherInput = this.querySelector(`input.other-category-input`);
-                if (select.value === 'Other' && otherInput.value) {
-                    select.value = otherInput.value;
-                }
-
-                //  dates for edit form
+                // Validate dates for edit form
                 var productionDate = new Date(this.querySelector('input[name="productionDate"]').value);
                 var endDate = new Date(this.querySelector('input[name="endDate"]').value);
                 if (productionDate >= endDate) {
                     e.preventDefault();
                     alert("Production date must be before the end date.");
+                    return false;
                 }
             });
         });
