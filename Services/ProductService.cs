@@ -1,66 +1,50 @@
 ﻿
-
-/////////////////////////////////////////////////// Start of file ////////////////////////////////////////////////////
-
-//---------------------------------- Start of Imports -----------------------//
+/////////////////////////////////////////// start of file //////////////////////////////////////////////////////
+///
+//------------ start of imports -------------------------//
 
 using Prog7311_Assignment_2.Data;
 
 using Prog7311_Assignment_2.Models;
 
-//------------------------------------ End of imports -----------------------//
+//------------------ end of imports ---------------//
 
 namespace Prog7311_Assignment_2.Services
 {
-    //*************************************** start of code ****************************************//
 
-
-    /// <summary>
-    /// Kashvir 
-    /// Sewpersad 
-    /// st10257503 
-    /// </summary>
+    //********************************* start of code *****************************// 
     public class ProductService
     {
-        private readonly DataContext _context; // variable for data context 
+        private readonly DataContext _context;
 
         public ProductService(DataContext context)
         {
-            _context = context; // giving the context an instance 
+            _context = context;
         }
 
-        /*
-         The below function gets and sets a variable for messages 
-         */
+
+        // error messages variables 
         public class ProductResult
         {
             public bool Success { get; set; }
             public string ErrorMessage { get; set; }
         }
-        /*
-         the below function gets the information stored in the product databse by using the ID unique to each farmer 
 
-         
-         */
         public List<Product> GetProductsByFarmer(int farmerId)
         {
             return _context.Products
-                .Where(p => p.FarmerId == farmerId) 
+
+                .Where(p => p.FarmerId == farmerId)
+
                 .ToList();
         }
-        /*
-         the below code is to retive all product data stored in the database 
-                
-                this will be used to display products on the dashboard 
-         */
+
         public List<Product> GetAllProducts()
         {
             return _context.Products.ToList();
         }
         /*
-         the below code is for the adding product process 
-
-        variables are passed in 
+         - below code is to display error messages based on invalid credentials 
          
          */
         public (bool Success, string ErrorMessage) AddProduct(string name, string category, DateTime productionDate, DateTime endDate, int userId)
@@ -71,7 +55,7 @@ namespace Prog7311_Assignment_2.Services
                 return (false, $"Farmer with UserId {userId} not found.");
             }
 
-            if (productionDate >= endDate)
+            if (productionDate >= endDate) // checking if the end date preceeds the start date 
             {
                 return (false, "Production Date must be before End Date.");
             }
@@ -79,21 +63,18 @@ namespace Prog7311_Assignment_2.Services
             var product = new Product
             {
                 Name = name,
-
                 Category = category,
-
                 ProductionDate = productionDate,
-
                 EndDate = endDate,
-
                 FarmerId = farmer.Id
-
             };
 
             try
             {
                 _context.Products.Add(product);
-                _context.SaveChanges();
+
+                _context.SaveChanges(); // save 
+
                 return (true, null);
             }
             catch (Exception ex)
@@ -101,6 +82,13 @@ namespace Prog7311_Assignment_2.Services
                 return (false, $"Failed to add product: {ex.Message}");
             }
         }
+
+        /*
+         below code is not required in the assignment 
+
+        -- below code is not entirely functional either 
+         
+         */
 
         public bool EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate, int userId)
         {
@@ -118,18 +106,20 @@ namespace Prog7311_Assignment_2.Services
             }
 
             product.Name = name;
-
             product.Category = category;
-
             product.ProductionDate = productionDate;
-
             product.EndDate = endDate;
 
             _context.SaveChanges();
 
             return true;
         }
+        /*
+         below code is not required in the assignment 
 
+        -- below code is not entirely functional either 
+         
+         */
         public bool DeleteProduct(int id, int userId)
         {
             var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
@@ -149,26 +139,48 @@ namespace Prog7311_Assignment_2.Services
             _context.SaveChanges();
             return true;
         }
+        //---------------------------------- filtration systems ------------------------------------------------//
 
+
+        //  method to handle both category and date range
         public List<Product> FilterProducts(string category, DateTime? startDate, DateTime? endDate)
         {
             var products = _context.Products.AsQueryable();
 
-            if (!string.IsNullOrEmpty(category))
+            // Filter by category 
 
+            if (!string.IsNullOrEmpty(category))
                 products = products.Where(p => p.Category == category);
 
-            if (startDate.HasValue)
+            // Filter by start date 
 
+            if (startDate.HasValue)
                 products = products.Where(p => p.ProductionDate >= startDate.Value);
 
-            if (endDate.HasValue)
+            // Filter by end date 
 
+            if (endDate.HasValue)
                 products = products.Where(p => p.EndDate <= endDate.Value);
 
-            return products.ToList();
+            // Include the Farmer navigation  for display
+
+            var result = products.ToList();
+
+
+
+            // Load farmer data for each product
+
+            foreach (var product in result)
+            {
+                if (product.Farmer == null && product.FarmerId > 0)
+                {
+                    product.Farmer = _context.Farmers.FirstOrDefault(f => f.Id == product.FarmerId);
+                }
+            }
+
+            return result;
         }
     }
-    //************************************* end of code ****************************************//
+    //************************************ end of code *******************************//
 }
-//////////////////////////////////////////////////// End of file //////////////////////////////////////////////////
+///////////////////////////////////////////////// end of file ////////////////////////////////////////////////////

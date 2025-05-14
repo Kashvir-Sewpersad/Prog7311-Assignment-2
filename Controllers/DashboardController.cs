@@ -1,9 +1,7 @@
 ﻿
-////////////////////////////////////////////// start of file ///////////////////////////////////////
-
-
-//------------------ start of imports -----------------//
-
+//////////////////////////////////////////////////////// start of file /////////////////////////////////////////////////////////
+///
+//-------------------- start of imports ----------------//
 using Microsoft.AspNetCore.Mvc;
 
 using Prog7311_Assignment_2.Models;
@@ -12,15 +10,12 @@ using Prog7311_Assignment_2.Services;
 
 using Prog7311_Assignment_2.Data;
 
-//-------------------- end of imports -----------------//
-
-
+//--------------------------- end of imports ---------------------//
 namespace Prog7311_Assignment_2.Controllers
 {
-    //***************************************** start of code ***************************************//
     public class DashboardController : Controller
     {
-        //------------- start of global variables ------------//
+        //***************************************** start of code ************************//
 
         private readonly ProductService _productService;
 
@@ -28,7 +23,6 @@ namespace Prog7311_Assignment_2.Controllers
 
         private readonly DataContext _context;
 
-        //--------------- end of global variables -------------// 
         public DashboardController(ProductService productService, FarmerService farmerService, DataContext context)
         {
             _productService = productService;
@@ -37,12 +31,7 @@ namespace Prog7311_Assignment_2.Controllers
 
             _context = context;
         }
-        /*
-         
-         // the below code is to control the actions chosen in the home page 
-         
-         
-         */
+
         public IActionResult Index()
         {
             var role = HttpContext.Session.GetString("Role");
@@ -50,37 +39,29 @@ namespace Prog7311_Assignment_2.Controllers
             var userIdString = HttpContext.Session.GetString("UserId") ?? "0";
 
             var userId = int.Parse(userIdString);
-             
-            
-            ///////////// farmer ///////////////////////
+
+            // Farmer
             if (role == "Farmer")
             {
-                var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId); // id is set 
+                var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
 
-
-
-                if (farmer == null) // if the farmer is not found 
+                if (farmer == null)
                 {
-                    TempData["Error"] = "Farmer account not found. Please contact an employee to register your account."; // error message shall display 
-
+                    TempData["Error"] = "Farmer account not found. Please contact an employee to register your account.";
                     return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
                 }
 
-
-                var products = _productService.GetProductsByFarmer(farmer.Id); // retrive the products created by a set farmer using the id (unique to each farmer due to me adding auto increment in database )
-
-                return View("FarmerDashboard", products); // displaying the products in the farmer dash 
+                var products = _productService.GetProductsByFarmer(farmer.Id);
+                return View("FarmerDashboard", products);
             }
-
-
-            /////////////// employee /////////////
+            // Employee 
             else if (role == "Employee")
             {
                 var model = new EmployeeDashboardViewModel
                 {
-                    Products = _productService.GetAllProducts(), // retrive products 
+                    Products = _productService.GetAllProducts(),
 
-                    Farmers = _farmerService.GetAllFarmers(), // retrive farmers 
+                    Farmers = _farmerService.GetAllFarmers(),
 
                     Employees = _context.Users.Where(u => u.Role == "Employee").ToList()
                 };
@@ -89,20 +70,14 @@ namespace Prog7311_Assignment_2.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
-
-
         /*
-         
-         // below code contains the logic to add a new product to the farmer dashboard. 
-
-        
-         
+         below method is to add a product to the system 
          */
         [HttpPost]
         public IActionResult AddProduct(string name, string category, DateTime productionDate, DateTime endDate, string otherCategory)
         {
-            var userIdString = HttpContext.Session.GetString("UserId"); 
+
+            var userIdString = HttpContext.Session.GetString("UserId");
 
             if (string.IsNullOrEmpty(userIdString) || userIdString == "0")
             {
@@ -110,9 +85,16 @@ namespace Prog7311_Assignment_2.Controllers
             }
             var userId = int.Parse(userIdString);
 
-            Console.WriteLine($"UserId: {userId}");
 
-            if (category == "Other" && !string.IsNullOrEmpty(otherCategory))
+            /*
+             this was causing absolute hell due to the fact that keeping consistency from users is practically imposible 
+
+                  // as such i am leaving it in but removed it from the ui 
+             
+             */
+
+
+            if (category == "Other" && !string.IsNullOrEmpty(otherCategory)) 
             {
                 category = otherCategory;
             }
@@ -123,24 +105,21 @@ namespace Prog7311_Assignment_2.Controllers
                 if (errorMessage.Contains("Farmer with UserId"))
                 {
                     TempData["Error"] = "Your farmer profile is missing. Please contact an employee to register your account.";
+
                     return RedirectToAction("LoginRegister", "Auth", new { role = "Farmer" });
                 }
                 TempData["Error"] = errorMessage;
             }
             return RedirectToAction("Index");
         }
-
-
-
-
-        //****************************** edit product is not required in the rubric and does not work correctly as yet ******************************************//
-        
+        /*
+         
+         below function  is to allow farmers to edit their producuts 
+         */
         [HttpPost]
         public IActionResult EditProduct(int id, string name, string category, DateTime productionDate, DateTime endDate)
         {
             var userId = int.Parse(HttpContext.Session.GetString("UserId") ?? "0");
-
-
             var farmer = _context.Farmers.FirstOrDefault(f => f.UserId == userId);
 
             if (farmer == null)
@@ -159,16 +138,20 @@ namespace Prog7311_Assignment_2.Controllers
                 category = otherCategory;
             }
             var result = _productService.EditProduct(id, name, category, productionDate, endDate, farmer.Id);
+
             if (!result)
             {
                 TempData["Error"] = "Failed to edit product. Ensure the product exists and the production date is before the end date.";
             }
             return RedirectToAction("Index");
         }
+        /*
+         delete product is not part of the rubric 
 
+                // ive added this in as i intend to work on this project in my holiday 
 
-
-        //**************************** delete product is not in the rubric and contains a few bugs ************************//
+        // currently non functional 
+         */
         [HttpPost]
         public IActionResult DeleteProduct(int id)
         {
@@ -184,22 +167,18 @@ namespace Prog7311_Assignment_2.Controllers
             }
 
             var result = _productService.DeleteProduct(id, farmer.Id);
-
             if (!result)
             {
                 TempData["Error"] = "Failed to delete product. Ensure the product exists.";
             }
             return RedirectToAction("Index");
         }
-
-
-        /*
-         below code is to allow a employee to add a farmer by filling the information listed on the form
-         */
+         // code to manage add farmer actions 
         [HttpPost]
         public IActionResult AddFarmer(string name, string surname, string username, string email, string password, string confirmPassword)
         {
-            var result = _farmerService.AddFarmer(name, surname, username, email, password, confirmPassword); //  adding 
+            var result = _farmerService.AddFarmer(name, surname, username, email, password, confirmPassword);
+
             if (!result.Success)
             {
                 TempData["Error"] = result.ErrorMessage;
@@ -211,33 +190,43 @@ namespace Prog7311_Assignment_2.Controllers
             return RedirectToAction("Index");
         }
 
-        /*
-         below code is to filter the products based on category and date 
-         */
+        // Enhanced FilterProducts action to handle date range filtering
         [HttpGet]
         public IActionResult FilterProducts(string category, DateTime? startDate, DateTime? endDate)
         {
+            // Validate date range if both are provided
+            if (startDate.HasValue && endDate.HasValue && startDate > endDate)
+            {
+                TempData["Error"] = "Start date must be before end date.";
+                return RedirectToAction("Index");
+            }
+
             var products = _productService.FilterProducts(category, startDate, endDate);
 
             var model = new EmployeeDashboardViewModel
             {
                 Products = products,
-
                 Farmers = _farmerService.GetAllFarmers(),
-
                 Employees = _context.Users.Where(u => u.Role == "Employee").ToList()
             };
+
+            // Pass filter parameters back to the view for maintaining state
+            ViewBag.SelectedCategory = category;
+
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
+
             return View("EmployeeDashboard", model);
         }
     }
 
     public class EmployeeDashboardViewModel
     {
-        public List<Product> Products { get; set; } // Added to hold loaded products 
-        public List<Farmer> Farmers { get; set; } // Added to hold registered farmers
-        public List<User> Employees { get; set; } // Added to hold registered employees
+        public List<Product> Products { get; set; }
+        public List<Farmer> Farmers { get; set; }
+        public List<User> Employees { get; set; }
     }
-
-    //*********************************** end of code ***************************//
+    //********************************************* end of code ****************************//
 }
-////////////////////////////////////////////// end  of file ///////////////////////////////////////
+//////////////////////////////////////////////////////////////////// end of file ///////////////////////////////////////////////////
