@@ -126,3 +126,17 @@ Key files and their roles:
 | wwwroot/ | Static files including CSS, images, and videos |
 | .gitignore | Ignores temporary files and build artifacts |
 | .gitattributes | Configures Git file attributes |
+
+### login details 
+
+- employee 
+    Username = emma.watson
+    Password = emma123
+    Role = Employee
+
+
+
+- farmer 
+     Username = liam.smith
+     Password = liam456
+     Role = Farmer
